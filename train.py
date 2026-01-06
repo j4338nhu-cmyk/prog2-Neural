@@ -41,6 +41,10 @@ dataloader_test = torch.utils.data.DataLoader(
     ds_test,
     batch_size=batch_size
 )
+
+#CPUかGPUを自動選択
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 # バッチを取り出す実験
 for image_batch, target_batch in dataloader_train:
     print(image_batch.shape, image_batch.dtype)
@@ -49,7 +53,8 @@ for image_batch, target_batch in dataloader_train:
 
 #モデルをインスタンス化　
 model = models.MyModel()
-
+#モデルをCPUかGPUに転送
+model.to(device)
 #損失関数の選択
 
 loss_fn = torch.nn.CrossEntropyLoss()
