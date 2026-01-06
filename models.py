@@ -23,11 +23,18 @@ def test_accuracy(model, dataloader):
     # すべてのミニバッチに対して推論し、正解率を計算する
     n_corrects = 0# 正解数
     
+    #モデルのデバイスを調べる
+    device = next(model.parameters()).device
     model.eval()
     #モデルにいれて結果(logits)を表示
     with torch.no_grad():
         for image_batch, label_batch in dataloader:
+            # ミニバッチをモデルのデバイスに転送
+            image_batch = image_batch.to(device)
+            label_batch = label_batch.to(device)
+    
             logits_batch = model(image_batch)
+            
 
             predict_batch = logits_batch.argmax(dim=1)
             n_corrects += (label_batch == predict_batch).sum().item()
@@ -38,8 +45,14 @@ def test_accuracy(model, dataloader):
 
 def train(model, dataloader,loss_fn, optimizer):
     """1エポック分の学習を実行する関数"""
+
+    #モデルのデバイスを調べる
+    device = next(model.parameters()).device
     model.train()
     for image_batch, label_batch in dataloader:
+         # ミニバッチをモデルのデバイスに転送
+        image_batch = image_batch.to(device)
+        label_batch = label_batch.to(device)
         # 順伝播
     
         logits_batch = model(image_batch)
@@ -59,9 +72,14 @@ def test(model, dataloader,loss_fn):
     """1エポック分のロスを計算する関数"""
     loss_total = 0.0
 
+    #モデルのデバイスを調べる
+    device = next(model.parameters()).device
     model.eval()
     with torch.no_grad():
         for image_batch, label_batch in dataloader:
+            # ミニバッチをモデルのデバイスに転送
+            image_batch = image_batch.to(device)
+            label_batch = label_batch.to(device)
         # 順伝播
        
             logits_batch = model(image_batch)
